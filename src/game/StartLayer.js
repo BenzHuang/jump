@@ -1,5 +1,6 @@
 import { getTargetBoxPos, direction, caleRelateTargetPos, setPivot, getCollisionRegion, getDistance } from './utils';
 import inside from 'point-in-polygon';
+import EndLayer from './EndLayer';
 
 class StartLayer extends Tiny.Container {
   constructor() {
@@ -9,7 +10,10 @@ class StartLayer extends Tiny.Container {
   }
 
   init() {
-    //this.backgroup = this.createBackground();
+    this.scores = 0;
+    //this.scoreText = new Tiny.Text('Score:' + this.scores);
+    //this.addChild(this.scoreText);
+    //this.background = this.createBackground();
     this.ant = this.createAnt();
     this.currentBox = this.createBox();
     // 将蚂蚁放到 box 组中
@@ -28,7 +32,7 @@ class StartLayer extends Tiny.Container {
     // 再来一个盒子
     this.targetBox = this.dropBox();
 
-    //this.backgroup.addChild(this.boxes);
+    //this.background.addChild(this.boxes);
   }
 
   createBackground() {
@@ -138,7 +142,12 @@ class StartLayer extends Tiny.Container {
 
     // 移动屏幕
     this.sceneMove();
-
+    //加分
+    this.scores++;
+    //this.removeChild(this.scoreText);
+    //this.scoreText = new Tiny.Text('Score:' + this.score);
+    //this.scoreText.setPosition(0, 0);
+    //this.addChild(this.scoreText);
     // 再来一个盒子
     this.targetBox = this.dropBox();
   }
@@ -146,6 +155,7 @@ class StartLayer extends Tiny.Container {
   _jumpFail(dropAction) {
     this.antFall(dropAction, () => {
       this.reset();
+      Tiny.app.replaceScene(new EndLayer(this.scores));
     });
   }
 
