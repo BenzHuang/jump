@@ -4,19 +4,18 @@ import inside from 'point-in-polygon';
 class StartLayer extends Tiny.Container {
   constructor() {
     super();
-
     this.init();
     this.handleTouch();
   }
 
   init() {
+    //this.backgroup = this.createBackground();
     this.ant = this.createAnt();
     this.currentBox = this.createBox();
     // 将蚂蚁放到 box 组中
     this.currentBox.addChild(this.ant);
     // 位置也得调整下
     this.ant.setPosition(100, 50);
-
     this.isJumping = false; // 在跳的过程中，不能再跳
     this.targetBoxDirection = direction.right; // 下一个盒子的方向
     this.targetBoxDelta = 200; // 下一个盒子的距离
@@ -28,6 +27,17 @@ class StartLayer extends Tiny.Container {
 
     // 再来一个盒子
     this.targetBox = this.dropBox();
+
+    //this.backgroup.addChild(this.boxes);
+  }
+
+  createBackground() {
+    //背景
+    const backgroundImg = Tiny.Sprite.fromImage(Tiny.resources.backgroundPng);
+    backgroundImg.name = 'background';
+    //backgroundImg.width = Tiny.WIN_SIZE.width;
+    this.addChild(backgroundImg);
+    return backgroundImg;
   }
 
   reset() {
@@ -46,7 +56,7 @@ class StartLayer extends Tiny.Container {
 
   createAnt() {
     // 使用图片生成一个 sprite
-    const ant = Tiny.Sprite.fromImage(Tiny.resources.antPng);
+    const ant = Tiny.Sprite.fromImage(Tiny.resources.dinosaursPng);
     // canvas 默认旋转中心是在左上角，这样定位起来比较麻烦，所以这里将蚂蚁的脚底作为定位中心
     ant.setPivot(ant.width / 2, ant.height);
     // 先随便定个位置吧
@@ -60,13 +70,13 @@ class StartLayer extends Tiny.Container {
   }
 
   createBox() {
-    const box = Tiny.Sprite.fromImage(Tiny.resources.boxPng);
+    const box = Tiny.Sprite.fromImage(Tiny.randomFromArray(Tiny.resources.boxArrayPng));
     box.setPivot(box.width / 2, box.height);
-    box.setPosition(100, 600);
+    box.setPosition(100, 1000);
     box.name = 'box';
 
     // 如果使用 addChild，会发现盒子将蚂蚁盖起来了，所以使用 addChildAt 来将盒子放到蚂蚁下面
-    this.addChildAt(box, 0);
+    this.addChildAt(box, 1);
     return box;
   }
 
@@ -121,6 +131,7 @@ class StartLayer extends Tiny.Container {
 
     this.currentBox = this.targetBox;
     this.boxes.push(this.currentBox);
+    //this.backgroup.addChild(this.boxes);
 
     // 确定下一个盒子的方向和位移
     this.setTargetBoxDirectionAndDelta();
@@ -196,7 +207,8 @@ class StartLayer extends Tiny.Container {
     const realX = x + width / 2 + 10; // 底部中点然后再微调下
     const realY = y + height;
 
-    this._drawAntRegion(realX, realY);
+    //显示蚂蚁中间点
+    //this._drawAntRegion(realX, realY);
 
     return [realX, realY];
   }
@@ -215,14 +227,19 @@ class StartLayer extends Tiny.Container {
     y -= this.position.y;
     var delta = 10; // 离边距需要隔一点距离
 
+    console.log('x=' + x);
+    console.log('y=' + y);
+    console.log('width=' + width);
     var result = [
-      [x + 133, y + delta], // 上
-      [x + width - delta, y + 49], // 右
-      [x + 133, y + 89 - delta], // 下
-      [x + 54 + delta, y + 48], // 左
+      [x + delta, y + delta], // 左上
+      [x + width - delta, y], // 右上
+      [x + width - delta, y + 130], // 右下
+      [x + delta, y + 130], // 左下
     ];
+    console.log('result=' + result);
 
-    this._drawBoxRegion(result);
+    //显示落地有效范围点
+    //this._drawBoxRegion(result);
 
     return result;
   }
@@ -235,6 +252,8 @@ class StartLayer extends Tiny.Container {
 
     var mask = new Tiny.Graphics();
     mask.lineStyle(4, 0x66FF33, 1);
+    console.log('path:');
+    console.log(path);
     mask.drawPolygon(path);
     mask.endFill();
 
@@ -367,7 +386,7 @@ class StartLayer extends Tiny.Container {
   }
 
   dropBox() {
-    var box = Tiny.Sprite.fromImage(Tiny.resources.boxPng);
+    var box = Tiny.Sprite.fromImage(Tiny.randomFromArray(Tiny.resources.boxArrayPng));
     box.setPivot(box.width / 2, box.height);
     box.name = 'box';
 
@@ -383,7 +402,7 @@ class StartLayer extends Tiny.Container {
     action.setEasing(Tiny.TWEEN.Easing.Bounce.Out); // 盒子落地有个弹性效果
     box.runAction(action);
 
-    this.addChildAt(box, 0);
+    this.addChildAt(box, 1);
     return box;
   }
 

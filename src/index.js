@@ -10,6 +10,7 @@ Tiny.app = new Tiny.Application({
   renderType: Tiny.RENDERER_TYPE.CANVAS,
   renderOptions: {
     backgroundColor: 0xbbbbbb,
+    //background: 'https://www.ikea.cn/images/cd/11/cd11855227e72bb1a1eed17f12879a20.jpg',
   },
 });
 
